@@ -1,0 +1,8 @@
+.terraform/
+dist/
+venv/
+
+*.tfstate*
+
+terraform-provider-aws
+/.idea/
