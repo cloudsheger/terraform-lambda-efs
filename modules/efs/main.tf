@@ -10,15 +10,7 @@ resource "aws_efs_file_system" "efs_for_lambda" {
   }
 }
 
-# mount targets for each subnets
-resource "aws_efs_mount_target" "mount_target" {
-  count           = length(var.subnet_ids)
-  file_system_id  = aws_efs_file_system.efs_for_lambda.id
-  subnet_id       = var.subnet_ids[count.index]
-  security_groups = var.security_group_ids
-}
-
-# EFS access point used by lambda file system
+# EFS access point used by lambda file system - available to lambda
 resource "aws_efs_access_point" "access_point_lambda" {
   file_system_id = aws_efs_file_system.efs_for_lambda.id
 
@@ -35,4 +27,16 @@ resource "aws_efs_access_point" "access_point_lambda" {
     gid = 1000
     uid = 1000
   }
+  tags = {
+    Name = var.name
+  }
 }
+
+# mount targets for each subnets
+resource "aws_efs_mount_target" "mount_target" {
+  count           = length(var.subnet_ids)
+  file_system_id  = aws_efs_file_system.efs_for_lambda.id
+  subnet_id       = var.subnet_ids[count.index]
+  security_groups = var.security_group_ids
+}
+

@@ -2,12 +2,18 @@ provider "aws" {
   region = var.aws_region
 }
 
+data "archive_file" "zip_the_python_code" {
+type        = "zip"
+source_dir  = "${path.module}/example/dist"
+output_path = "${path.module}/example/dist/function.zip"
+}
 module "lambda" {
   source = "./modules/lambda"
 
   name = "${var.stage}-${var.name}-function"
 
   deployment_package = var.deployment_package
+  #filename           = "${path.module}/example/dist/function.zip"
   handler = var.handler
   runtime = var.runtime
   timeout = var.timeout
@@ -22,6 +28,8 @@ module "lambda" {
   efs_mount_targets = module.efs.mount_targets
 
   local_mount_path = var.local_mount_path
+
+  depends_on = [aws_iam_role_policy_attachment.attach_iam_policy_to_iam_role]  
 }
 
 module "api" {
@@ -45,6 +53,10 @@ module "efs" {
   throughput_mode = var.efs_throughput_mode
 }
 
+module "iam" {
+  source = "./modules/iam"
+}
+
 module "vpc" {
   source = "./modules/vpc"
 
@@ -54,8 +66,3 @@ module "vpc" {
   public_subnet_cidrs = ["10.0.96.0/20", "10.0.112.0/20", "10.0.128.0/20"]
   private_subnet_cidrs = ["10.0.0.0/20", "10.0.16.0/20", "10.0.32.0/20"]
 }
-
-module "iam" {
-  source = "./modules/iam"
-}
-

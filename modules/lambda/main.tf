@@ -1,17 +1,10 @@
 provider "archive" {}
 
-module lambda_dep {
-  source           = "github.com/cloudsheger/terraform-lambda-packaging"
-  script_path      = "${path.module}/src/function.py"
-  #pip_dependencies = ["pyfiglet==0.8.post1"]
-}
-
 resource "aws_lambda_function" "lambda" {
   function_name = var.name
 
   filename         = var.deployment_package
-  #source_code_hash = filebase64sha256(var.deployment_package)
-  source_code_hash = module.data.archive_file.lambda_source.output_base64sha256
+  source_code_hash = filebase64sha256(var.deployment_package)
 
   role    = var.iam_role_for_lambda
   handler = var.handler

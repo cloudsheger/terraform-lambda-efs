@@ -6,3 +6,5 @@ venv/
 
 terraform-provider-aws
 /.idea/
+*.terraform.lock.hcl
+*.terraform.lock.hcl
