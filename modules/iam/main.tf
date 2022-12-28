@@ -1,38 +1,24 @@
-resource "aws_iam_role" "iam_role_for_lambda" {
-  assume_role_policy = data.aws_iam_policy_document.assume_role_policy.json
-}
+resource "aws_iam_role" "lambda_example" {
+  name = var.lambda_name
 
-data "aws_iam_policy_document" "assume_role_policy" {
-  statement {
-    sid    = ""
-    effect = "Allow"
-
-    principals {
-      identifiers = ["lambda.amazonaws.com"]
-      type        = "Service"
+  assume_role_policy = <<EOF
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Action": "sts:AssumeRole",
+      "Principal": {
+        "Service": "lambda.amazonaws.com"
+      },
+      "Effect": "Allow",
+      "Sid": ""
     }
-
-    actions = [
-      "sts:AssumeRole"]
-  }
+  ]
+}
+EOF
 }
 
-data "aws_partition" "current" {}
-
-data "aws_iam_policy" "AWSLambdaVPCAccessExecutionRole" {
-  arn = "arn:${data.aws_partition.current.partition}:iam::aws:policy/service-role/AWSLambdaVPCAccessExecutionRole"
-}
-
-data "aws_iam_policy" "AmazonElasticFileSystemClientFullAccess" {
-  arn = "arn:${data.aws_partition.current.partition}:iam::aws:policy/AmazonElasticFileSystemClientFullAccess"
-}
-
-resource "aws_iam_role_policy_attachment" "AWSLambdaVPCAccessExecutionRole-attach" {
-  role       = aws_iam_role.iam_role_for_lambda.name
-  policy_arn = data.aws_iam_policy.AWSLambdaVPCAccessExecutionRole.arn
-}
-
-resource "aws_iam_role_policy_attachment" "AmazonElasticFileSystemClientFullAccess-attach" {
-  role       = aws_iam_role.iam_role_for_lambda.name
-  policy_arn = data.aws_iam_policy.AmazonElasticFileSystemClientFullAccess.arn
+resource "aws_iam_role_policy_attachment" "lambda_example" {
+  role       = aws_iam_role.lambda_example.name
+  policy_arn = "arn:aws:iam::aws:policy/AWSLambdaExecute"
 }

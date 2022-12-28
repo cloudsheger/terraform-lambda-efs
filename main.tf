@@ -2,44 +2,47 @@ provider "aws" {
   region = var.aws_region
 }
 
-data "archive_file" "zip_the_python_code" {
-type        = "zip"
-source_dir  = "${path.module}/example/dist"
-output_path = "${path.module}/example/dist/function.zip"
+data "aws_iam_policy_document" "AWSLambdaTrustPolicy" {
+  statement {
+    actions    = ["sts:AssumeRole"]
+    effect     = "Allow"
+    principals {
+      type        = "Service"
+      identifiers = ["lambda.amazonaws.com"]
+    }
+  }
 }
+
+resource "aws_iam_role" "terraform_function_role" {
+  name               = "terraform_function_role"
+  assume_role_policy = "${data.aws_iam_policy_document.AWSLambdaTrustPolicy.json}"
+}
+
+resource "aws_iam_role_policy_attachment" "terraform_lambda_policy" {
+  role       = "${aws_iam_role.terraform_function_role.name}"
+  policy_arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+}
+
 module "lambda" {
   source = "./modules/lambda"
 
   name = "${var.stage}-${var.name}-function"
 
-  deployment_package = var.deployment_package
-  #filename           = "${path.module}/example/dist/function.zip"
+  deployment_package = "${path.module}/example/dist/function.zip"
   handler = var.handler
   runtime = var.runtime
   timeout = var.timeout
   memory_size = var.memory_size
 
-  iam_role_for_lambda = module.iam.iam_role_for_lambda.arn
+  iam_role_for_lambda = "${aws_iam_role.terraform_function_role.arn}"
 
-  subnet_ids = module.vpc.private_subnetes
-  security_groups = [module.vpc.sg_for_lambda.id]
+  subnet_ids = ["subnet-0e1b7de55bb0d12fb"]
+  security_groups = [ "sg-0d31822b4384b66b7" ]
 
   efs_access_point_arn = module.efs.access_point_arn
   efs_mount_targets = module.efs.mount_targets
 
   local_mount_path = var.local_mount_path
-
-  depends_on = [aws_iam_role_policy_attachment.attach_iam_policy_to_iam_role]  
-}
-
-module "api" {
-  source     = "./modules/api"
-
-  name       = "${var.stage}-${var.name}-api"
-  method     = "ANY"
-  lambda     = module.lambda.name
-  lambda_arn = module.lambda.arn
-  stage_name = var.stage
 
 }
 
@@ -47,22 +50,10 @@ module "efs" {
   source = "./modules/efs"
 
   name = "${var.stage}-${var.name}-efs"
-  subnet_ids = module.vpc.private_subnetes
-  security_group_ids = [module.vpc.sg_for_lambda.id]
+  //subnet_ids = module.vpc.private_subnetes
+  subnet_ids = ["subnet-0e1b7de55bb0d12fb"]
+  //security_group_ids = [module.vpc.sg_for_lambda.id]
+  security_group_ids = [ "sg-0d31822b4384b66b7" ]
   provisioned_throughput = var.efs_provisioned_throughput
   throughput_mode = var.efs_throughput_mode
-}
-
-module "iam" {
-  source = "./modules/iam"
-}
-
-module "vpc" {
-  source = "./modules/vpc"
-
-  name = "${var.stage}-${var.name}-vpc"
-  vpc_cidr = "10.0.0.0/16"
-  azs = var.availability_zones
-  public_subnet_cidrs = ["10.0.96.0/20", "10.0.112.0/20", "10.0.128.0/20"]
-  private_subnet_cidrs = ["10.0.0.0/20", "10.0.16.0/20", "10.0.32.0/20"]
 }

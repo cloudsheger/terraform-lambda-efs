@@ -3,6 +3,6 @@ name               = "ztpt-worker"
 deployment_package = "demo"
 stage              = "test"
 
-function_name      = "example-complete"
+function_name      = "welcome"
 handler            = "handler.handler"
 runtime            = "python3.9"
