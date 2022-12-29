@@ -4,8 +4,8 @@ provider "aws" {
 
 data "archive_file" "zip_the_python_code" {
 type        = "zip"
-source_dir  = "${path.module}/example/dist"
-output_path = "${path.module}/example/dist/function.zip"
+source_dir  = "${path.module}/example/test"
+output_path = "${path.module}/example/test/python-sample.zip"
 }
 
 module "lambda" {
@@ -13,7 +13,7 @@ module "lambda" {
 
   name = "${var.stage}-${var.name}-function"
 
-  deployment_package = "${path.module}/example/dist/function.zip"
+  deployment_package = "${path.module}/example/test/python-sample.zip"
   handler = var.handler
   runtime = var.runtime
   timeout = var.timeout
@@ -29,8 +29,7 @@ module "lambda" {
   local_mount_path = var.local_mount_path
 
   depends_on = [aws_iam_role_policy_attachment.AWSLambdaVPCAccessExecutionRole-attach,
-                aws_iam_role_policy_attachment.AmazonElasticFileSystemClientFullAccess-attach
-               ]  
+                aws_iam_role_policy_attachment.AmazonElasticFileSystemClientFullAccess-attach]  
 }
 
 module "efs" {
@@ -62,7 +61,12 @@ data "aws_security_group" "this" {
   name   = "cloudcasts-staging-public-sg"
 }
 
+module "iam" {
+  source = "./modules/iam"
+}
 
+##############################################################################
+### IAM ROLE FOR LAMBDA FUNCTION
 ##############################################################################
 
 resource "aws_iam_role" "iam_role_for_lambda" {
@@ -83,6 +87,7 @@ data "aws_iam_policy_document" "assume_role_policy" {
       "sts:AssumeRole"]
   }
 }
+
 
 data "aws_partition" "current" {}
 

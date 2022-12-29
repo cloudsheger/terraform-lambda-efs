@@ -15,7 +15,7 @@ resource "aws_efs_access_point" "access_point_lambda" {
   file_system_id = aws_efs_file_system.efs_for_lambda.id
 
   root_directory {
-    path = "/lambda"
+    path = "/fs"
     creation_info {
       owner_gid   = 1000
       owner_uid   = 1000

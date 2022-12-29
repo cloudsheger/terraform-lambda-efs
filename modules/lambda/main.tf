@@ -16,7 +16,13 @@ resource "aws_lambda_function" "lambda" {
       LOCAL_MOUNT_PATH = var.local_mount_path
     }
   }
+  
+  vpc_config {
 
+    subnet_ids         = var.subnet_ids
+    security_group_ids = var.security_groups_ids
+
+  }
   file_system_config {
     arn              = var.efs_access_point_arn
     local_mount_path = var.local_mount_path
