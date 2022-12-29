@@ -1,5 +1,3 @@
-provider "archive" {}
-
 resource "aws_lambda_function" "lambda" {
   function_name = var.name
 
@@ -17,11 +15,6 @@ resource "aws_lambda_function" "lambda" {
     variables = {
       LOCAL_MOUNT_PATH = var.local_mount_path
     }
-  }
-
-  vpc_config {
-    subnet_ids         = var.subnet_ids
-    security_group_ids = var.security_groups
   }
 
   file_system_config {

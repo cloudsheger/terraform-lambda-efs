@@ -13,3 +13,4 @@ output "private_subnetes" {
 output "sg_for_lambda" {
   value = aws_security_group.sg_lambda
 }
+

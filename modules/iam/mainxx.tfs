@@ -24,7 +24,7 @@ data "aws_iam_policy" "AWSLambdaVPCAccessExecutionRole" {
   arn = "arn:${data.aws_partition.current.partition}:iam::aws:policy/service-role/AWSLambdaVPCAccessExecutionRole"
 }
 
-data "aws_iam_policy" "AmazonElasticFileSystemClientFullAccess" {
+data "aws_iam_policy" "attach_iam_policy_to_iam_role" {
   arn = "arn:${data.aws_partition.current.partition}:iam::aws:policy/AmazonElasticFileSystemClientFullAccess"
 }
 

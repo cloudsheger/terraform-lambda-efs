@@ -66,3 +66,9 @@ module "vpc" {
   public_subnet_cidrs = ["10.0.96.0/20", "10.0.112.0/20", "10.0.128.0/20"]
   private_subnet_cidrs = ["10.0.0.0/20", "10.0.16.0/20", "10.0.32.0/20"]
 }
+
+
+
+subnet_ids = ["subnet-0e1b7de55bb0d12fb"]
+  //security_group_ids = [module.vpc.sg_for_lambda.id]
+  security_group_ids = [ "sg-0d31822b4384b66b7" ]

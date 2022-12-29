@@ -31,7 +31,7 @@ variable "subnet_ids" {
   description = "subnet ids for lambda function"
 }
 
-variable "security_groups" {
+variable "security_groups_ids" {
   description = "security group ids for lambda function"
   type = list(string)
   default = []

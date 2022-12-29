@@ -1,3 +1,3 @@
-variable "lambda_name" {
+variable "name" {
   description = "lambda function name"
 }
