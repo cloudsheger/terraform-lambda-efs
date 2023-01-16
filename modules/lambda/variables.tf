@@ -2,10 +2,13 @@ variable "name" {
   description = "lambda function name"
 }
 
-variable "deployment_package" {
+variable "filename" {
   description = "lambda deployment package"
 }
 
+variable "source_code_hash"{
+  description = "lambda function hash code"
+}
 variable "iam_role_for_lambda" {
   description = "lambda execution role arn"
 }

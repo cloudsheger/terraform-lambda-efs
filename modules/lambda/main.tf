@@ -1,8 +1,8 @@
 resource "aws_lambda_function" "lambda" {
   function_name = var.name
 
-  filename         = var.deployment_package
-  source_code_hash = filebase64sha256(var.deployment_package)
+  filename         = var.filename
+  source_code_hash = var.source_code_hash
 
   role    = var.iam_role_for_lambda
   handler = var.handler

@@ -23,9 +23,13 @@ variable "runtime" {
   description = "lambda function runtime"
 }
 
+variable "log_retention_in_days" {
+  description = "log retention time"
+  default = 7
+}
 variable "timeout" {
   description = "lambda function timeout"
-  default = 3
+  default = 100
 }
 
 variable "memory_size" {
@@ -35,7 +39,7 @@ variable "memory_size" {
 
 variable "local_mount_path" {
   description = "local mount path inside lambda function. must start with '/mnt/'. default is '/mnt/shared'"
-  default = "/mnt/fs"
+  default = "/mnt/ztpt-project"
 }
 
 variable "efs_throughput_mode" {
@@ -48,7 +52,20 @@ variable "efs_provisioned_throughput" {
   default = null
 }
 
-variable "availability_zones" {
-  description = "availability zones for the vpc"
-  default = ["us-east-1a", "us-east-1b", "us-east-1c"]
+variable "subnet_ids" {
+  description = "target subnet ids to mount efs file system"
+  type = list(string)
+  default = ["subnet-0be9bf69885fb438d"]
+}
+
+variable "security_group_ids" {
+  description = "security group ids for the mount targets"
+  type = list(string)
+  default = ["sg-0d31822b4384b66b7"]
+}
+
+variable "lambda_root" {
+  type        = string
+  description = "The relative path to the source of the lambda"
+  default     = "lambda"
 }

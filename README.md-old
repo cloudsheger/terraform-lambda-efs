@@ -1,0 +1,30 @@
+## Terraform Stateful Lambda API Module
+
+Terraform module for quickly create an AWS Lambda function with EFS file system and a Rest API 
+
+## License
+This library is licensed under the MIT-0 License. See the LICENSE file.
+
+## file system debug,vpc,secrity group and subnet
+
+#aws efs describe-file-systems --file-system-id fs-090b3ba8c95c0f176 --output text
+
+## Access point debug , vpc , secrity group and sebnet
+#aws efs describe-access-points --access-point-id <access-point-id>
+
+#aws lambda get-function-configuration --function-name #<function-name>
+"VpcConfig": {
+        "SubnetIds": [
+            "subnet-0be9bf69885fb438d" / subnet-0be9bf69885fb438d
+        ],
+        "SecurityGroupIds": [
+            "sg-0d31822b4384b66b7" / sg-0d31822b4384b66b7 
+        ],
+        "VpcId": "vpc-0762b0374346514fc"
+    }
+
+# Calling the invoke API action failed with this message: The function couldn't connect to the Amazon EFS file system with access point
+
+```
+Add inbound rule for the security group, On both Inbound and Outbound I allow traffic on TCP port 2049 (NFS) and for Source and Destination I add a rule each for both the VPC’s IPv4 subnet, and the IPv6 subnet.
+```

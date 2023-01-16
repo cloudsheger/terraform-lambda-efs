@@ -2,7 +2,6 @@ variable "name" {
   description = "application name"
 }
 
-
 variable "subnet_ids" {
   description = "target subnet ids to mount efs file system"
   type = list(string)
