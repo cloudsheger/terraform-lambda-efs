@@ -9,9 +9,6 @@ variable "filename" {
 variable "source_code_hash"{
   description = "lambda function hash code"
 }
-variable "iam_role_for_lambda" {
-  description = "lambda execution role arn"
-}
 
 variable "handler" {
   description = "lambda handler"
@@ -51,4 +48,8 @@ variable "local_mount_path" {
 
 variable "efs_mount_targets" {
   description = "efs file system mount targets"
+}
+variable "role" {
+  description = "terrafom role for lambda"
+  
 }

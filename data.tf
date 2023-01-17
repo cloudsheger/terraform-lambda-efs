@@ -1,10 +1,32 @@
-locals {
-  lambda_dir            = "${path.module}/${var.lambda_root}"
+resource "null_resource" "install_dependencies" {
+
+  provisioner "local-exec" {
+    command = "${path.module}/lambda/build.sh"
+  }
+  triggers = {
+    handler      = filemd5("${path.module}/${var.lambda_root}/handler.py")
+    requirements = filemd5("${path.module}/${var.lambda_root}/requirements.txt")
+    build        = filemd5("${path.module}/${var.lambda_root}/build.sh")
+  }
+}
+
+# Now, in order to ensure that cached versions of the Lambda aren't invoked by AWS, 
+# let's give our zip file a unique name for each version. 
+# We can do with by hashing our files together.
+resource "random_uuid" "lambda_src_hash" {
+  keepers = {
+    for filename in setunion(
+      fileset("${path.module}/${var.lambda_root}", "handler.py"),
+      fileset("${path.module}/${var.lambda_root}", "requirements.txt"),
+      fileset("${path.module}/${var.lambda_root}", "build.sh")
+    ):
+        filename => filemd5("${path.module}/${var.lambda_root}/${filename}")
+  }
 }
 
 data "archive_file" "lambda_source" {
   source_dir  = "${path.module}/${var.lambda_root}"
-  output_path = "${local.lambda_dir}/${random_uuid.lambda_src_hash.result}.zip"
+  output_path = "${path.module}/${var.lambda_root}/${random_uuid.lambda_src_hash.result}.zip"
   type        = "zip"
 
   depends_on  = [null_resource.install_dependencies]
@@ -13,34 +35,4 @@ data "archive_file" "lambda_source" {
     "venv",
     "package",
   ]
-}
-
-#######################################################
-#### IAM Role data definition
-######################################################
-
-data "aws_iam_policy_document" "assume_role_policy" {
-  statement {
-    sid    = ""
-    effect = "Allow"
-
-    principals {
-      identifiers = ["lambda.amazonaws.com"]
-      type        = "Service"
-    }
-
-    actions = [
-      "sts:AssumeRole"]
-  }
-}
-
-
-data "aws_partition" "current" {}
-
-data "aws_iam_policy" "AWSLambdaVPCAccessExecutionRole" {
-  arn = "arn:${data.aws_partition.current.partition}:iam::aws:policy/service-role/AWSLambdaVPCAccessExecutionRole"
-}
-
-data "aws_iam_policy" "AmazonElasticFileSystemClientFullAccessRole" {
-  arn = "arn:${data.aws_partition.current.partition}:iam::aws:policy/AmazonElasticFileSystemClientFullAccess"
 }

@@ -1,20 +1,55 @@
 resource "aws_iam_role" "iam_role_for_lambda" {
-  assume_role_policy = data.aws_iam_policy_document.assume_role_policy.json
+  name = "${var.project_name}-${var.environment}-iam-role-for-lambda-test"
+
+  assume_role_policy = <<EOF
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Action": "sts:AssumeRole",
+      "Principal": {
+        "Service": [
+          "lambda.amazonaws.com"
+          ]
+      },
+      "Effect": "Allow",
+      "Sid": ""
+    }
+  ]
+}
+EOF
 }
 
-data "aws_iam_policy_document" "assume_role_policy" {
-  statement {
-    sid    = ""
-    effect = "Allow"
+resource "aws_iam_policy" "policy" {
+  name        = "${var.project_name}-${var.environment}-lambda-test-policy"
+  description = ""
 
-    principals {
-      identifiers = ["lambda.amazonaws.com"]
-      type        = "Service"
+  policy = <<EOF
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Action": [
+        "logs:CreateLogGroup",
+        "logs:CreateLogStream",
+        "logs:PutLogEvents",
+        "secretsmanager:GetSecretValue",
+        "kms:Decrypt",
+        "ec2:DescribeNetworkInterfaces",
+        "ec2:CreateNetworkInterface",
+        "ec2:DeleteNetworkInterface"
+      ],
+      "Effect": "Allow",
+      "Resource": "*"
     }
+  ]
+}
+EOF
+}
 
-    actions = [
-      "sts:AssumeRole"]
-  }
+resource "aws_iam_role_policy_attachment" "lambda-policy-attach" {
+  role       = aws_iam_role.iam_role_for_lambda.name
+  policy_arn = aws_iam_policy.policy.arn
 }
 
 data "aws_partition" "current" {}

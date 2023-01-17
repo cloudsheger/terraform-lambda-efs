@@ -8,13 +8,11 @@ resource "null_resource" "install_dependencies" {
   provisioner "local-exec" {
     command = "${path.module}/lambda/build.sh"
   }
-
   triggers = {
     handler      = filemd5("${path.module}/${var.lambda_root}/handler.py")
     requirements = filemd5("${path.module}/${var.lambda_root}/requirements.txt")
     build        = filemd5("${path.module}/${var.lambda_root}/build.sh")
   }
-
 }
 
 # Now, in order to ensure that cached versions of the Lambda aren't invoked by AWS, 
@@ -23,10 +21,10 @@ resource "null_resource" "install_dependencies" {
 resource "random_uuid" "lambda_src_hash" {
   keepers = {
     for filename in setunion(
-      fileset(var.lambda_root, "handler.py"),
-      fileset(var.lambda_root, "requirements.txt"),
-      fileset(var.lambda_root, "build.sh")
+      fileset("${path.module}/${var.lambda_root}", "handler.py"),
+      fileset("${path.module}/${var.lambda_root}", "requirements.txt"),
+      fileset("${path.module}/${var.lambda_root}", "build.sh")
     ):
-        filename => filemd5("${var.lambda_root}/${filename}")
+        filename => filemd5("${path.module}/${var.lambda_root}/${filename}")
   }
 }

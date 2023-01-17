@@ -1,6 +1,10 @@
 # EFS file system
 resource "aws_efs_file_system" "efs_for_lambda" {
-
+  lifecycle_policy {
+            transition_to_ia = "AFTER_7_DAYS"
+        }
+        encrypted = true
+  
   performance_mode = var.performance_mode
   throughput_mode = var.throughput_mode
   provisioned_throughput_in_mibps = var.provisioned_throughput
@@ -17,15 +21,15 @@ resource "aws_efs_access_point" "access_point_lambda" {
   root_directory {
     path = "/ztpt-project"
     creation_info {
-      owner_gid   = 1000
-      owner_uid   = 1000
-      permissions = "777"
+      owner_gid   = 1001
+      owner_uid   = 1001
+      permissions = "755"
     }
   }
 
   posix_user {
-    gid = 1000
-    uid = 1000
+    gid = 1001
+    uid = 1001
   }
   tags = {
     Name = var.name
