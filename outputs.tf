@@ -15,3 +15,11 @@ output "iam_role_for_lambda_arn" {
   description = "Amazon Resource Name (ARN) specifying the lambda execution role."
   value       = module.iam.iam_role_for_lambda_arn
 }
+
+output "cloudtrail_name" {
+  value = module.cloudtrail.cloudtrail_name
+}
+
+output "cloudtrail_bucket" {
+  value = module.cloudtrail.cloudtrail_bucket
+}

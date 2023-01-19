@@ -1,7 +1,3 @@
-provider "aws" {
-  region = var.aws_region
-}
-
 module "lambda" {
   source = "./modules/lambda"
 
@@ -12,15 +8,17 @@ module "lambda" {
   runtime          = var.runtime
   timeout          = var.timeout
   memory_size      = var.memory_size
+  cloudtrail_arn   = module.cloudtrail.cloudtrail_arn
   role             = module.iam.iam_role_for_lambda_arn
   subnet_ids = var.subnet_ids
   security_groups_ids = var.security_group_ids
   efs_access_point_arn = module.efs.access_point_arn
   efs_mount_targets    = module.efs.mount_targets
   local_mount_path     = var.local_mount_path
-  depends_on           = [aws_iam_role_policy_attachment.AWSLambdaVPCAccessExecutionRole-attach,
-                         aws_iam_role_policy_attachment.AmazonElasticFileSystemClientFullAccess-attach,
-                         module.cloudwatch.lambda_monitor]  
+  depends_on           = [module.iam.AWSLambdaVPCAccessExecutionRole-attach,
+                          module.iam.AmazonElasticFileSystemClientFullAccess-attach,
+                          module.cloudwatch.lambda_monitor,
+                          module.cloudtrail.cloudtrail_policy]  
 }
 
 module "efs" {
@@ -41,4 +39,8 @@ module "cloudwatch" {
   source = "./modules/cloudwatch"
   log_retention_in_days = var.log_retention_in_days
   lambda_name           = "${var.stage}-${var.name}-function"
+}
+
+module "cloudtrail" {
+  source = "./modules/cloudtrail"
 }

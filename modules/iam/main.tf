@@ -37,15 +37,18 @@ resource "aws_iam_policy" "policy" {
         "kms:Decrypt",
         "ec2:DescribeNetworkInterfaces",
         "ec2:CreateNetworkInterface",
-        "ec2:DeleteNetworkInterface"
+        "ec2:DeleteNetworkInterface",
+        "s3:GetObject"
       ],
       "Effect": "Allow",
       "Resource": "*"
+
     }
   ]
 }
 EOF
 }
+# "arn:aws:s3:::my-cloudtrail-bucket/*"
 
 resource "aws_iam_role_policy_attachment" "lambda-policy-attach" {
   role       = aws_iam_role.iam_role_for_lambda.name

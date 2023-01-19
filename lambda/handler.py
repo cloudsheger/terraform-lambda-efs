@@ -1,13 +1,13 @@
-# Tell python to include the package directory
-import sys
-sys.path.insert(0, 'package/')
-
-#import requests
-import pip._vendor.requests 
-
-
+import json
+import urllib.request
+import os
 def lambda_handler(event, context):
+    url = 'http://212.183.159.230/1GB.zip'
+    file_name = '/mnt/ztpt-project/tmp-file'
+    urllib.request.urlretrieve(url, file_name)
+    os.system('ls -l /mnt/ztpt-project')
 
-    my_ip = pip._vendor.requests.get("https://api.ipify.org?format=json").json()
-
-    return {"Public Ip": my_ip["ip"]}
+    return {
+      'statusCode': 200,
+      'body': json.dumps('Hello from Lambda!')
+    }

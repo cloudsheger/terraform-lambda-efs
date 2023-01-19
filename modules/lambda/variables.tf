@@ -53,3 +53,6 @@ variable "role" {
   description = "terrafom role for lambda"
   
 }
+variable "cloudtrail_arn" {
+  description = "cloudtrail for lambda"
+}

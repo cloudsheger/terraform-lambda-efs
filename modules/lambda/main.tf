@@ -3,9 +3,10 @@ resource "aws_lambda_function" "lambda" {
   filename         = var.filename
   source_code_hash = var.source_code_hash
 
-  role    = var.role
-  handler = var.handler
-  runtime = var.runtime
+  role           = var.role
+  #cloudtrail_arn = var.cloudtrail_arn
+  handler        = var.handler
+  runtime        = var.runtime
 
   timeout = var.timeout
   memory_size = var.memory_size
@@ -27,6 +28,7 @@ resource "aws_lambda_function" "lambda" {
     local_mount_path = var.local_mount_path
   }
 
+ 
   # Explicitly declare dependency on EFS mount target.
   # When creating or updating Lambda functions, mount target must be in 'available' lifecycle state.
   depends_on = [var.efs_mount_targets]
