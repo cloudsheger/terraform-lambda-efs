@@ -12,6 +12,10 @@ depends_on = [aws_s3_bucket_policy.cloudtrail_policy]
 
 resource "aws_s3_bucket" "cloudtrail_bucket" {
   bucket = var.s3-bucket-cloudtrail
+  force_destroy = true
+ # lifecycle {
+  #  pre_destroy = "./remove_objects_from_s3.sh"
+  #}
 }
 
 resource "aws_s3_bucket_policy" "cloudtrail_policy" {

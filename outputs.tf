@@ -23,3 +23,7 @@ output "cloudtrail_name" {
 output "cloudtrail_bucket" {
   value = module.cloudtrail.cloudtrail_bucket
 }
+
+output "source-s3-bucket" {
+ value = "${aws_s3_bucket.bucket-lambda-deployments.id}"
+}

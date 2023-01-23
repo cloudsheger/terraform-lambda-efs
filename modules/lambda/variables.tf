@@ -56,3 +56,7 @@ variable "role" {
 variable "cloudtrail_arn" {
   description = "cloudtrail for lambda"
 }
+variable "s3_bucket" {
+}
+variable "s3_key" {
+}

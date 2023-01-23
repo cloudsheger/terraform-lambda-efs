@@ -39,7 +39,7 @@ variable "memory_size" {
 
 variable "local_mount_path" {
   description = "local mount path inside lambda function. must start with '/mnt/'. default is '/mnt/shared'"
-  default = "/mnt/ztpt-project"
+  default = "/mnt/cloudsheger-project"
 }
 
 variable "efs_throughput_mode" {

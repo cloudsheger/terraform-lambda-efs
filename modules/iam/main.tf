@@ -33,12 +33,13 @@ resource "aws_iam_policy" "policy" {
         "logs:CreateLogGroup",
         "logs:CreateLogStream",
         "logs:PutLogEvents",
-        "secretsmanager:GetSecretValue",
-        "kms:Decrypt",
-        "ec2:DescribeNetworkInterfaces",
-        "ec2:CreateNetworkInterface",
-        "ec2:DeleteNetworkInterface",
-        "s3:GetObject"
+        "s3:GetObject",
+        "s3:PutObject",
+        "efs:*",
+        "elasticfilesystem:ClientMount",
+        "elasticfilesystem:ClientWrite",
+        "cloudtrail:LookupEvents",
+        "cloudtrail:GetTrailStatus"
       ],
       "Effect": "Allow",
       "Resource": "*"

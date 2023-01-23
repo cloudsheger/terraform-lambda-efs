@@ -1,16 +1,15 @@
 resource "aws_lambda_function" "lambda" {
-  function_name = var.name
+  function_name    = var.name
   filename         = var.filename
   source_code_hash = var.source_code_hash
 
-  role           = var.role
+  role             = var.role
   #cloudtrail_arn = var.cloudtrail_arn
-  handler        = var.handler
-  runtime        = var.runtime
+  handler          = var.handler
+  runtime          = var.runtime
 
-  timeout = var.timeout
-  memory_size = var.memory_size
-
+  timeout          = var.timeout
+  memory_size      = var.memory_size
   environment {
     variables = {
       LOCAL_MOUNT_PATH = var.local_mount_path
