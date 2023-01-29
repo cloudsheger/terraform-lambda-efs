@@ -1,7 +1,7 @@
 .terraform/
 dist/
 venv/
-lambda/package
+lambda/*.zip
 *.tfstate*
 
 terraform-provider-aws

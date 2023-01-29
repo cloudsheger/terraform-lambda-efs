@@ -58,7 +58,8 @@ module "cloudtrail" {
 # upload zip to s3 and then update lamda function from s3
 resource "aws_s3_bucket_object" "file_upload" {
   bucket = aws_s3_bucket.bucket-lambda-deployments.id
-  key    = data.archive_file.lambda_source.source_dir
+ # key    = "${path.module}/${var.lambda_root}/lambda-package.zip"
+  key = data.archive_file.lambda_source.output_path
   source = data.archive_file.lambda_source.output_path # its mean it depended on zip
 }
 
@@ -70,7 +71,7 @@ resource "aws_s3_bucket" "bucket-lambda-deployments" {
 
   tags = {
     Environment = "dev"
-    Owner       = "ztpt"
+    Owner       = "cloudsheger"
   }
   force_destroy = true
 }
