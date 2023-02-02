@@ -15,12 +15,14 @@ pipeline {
     stages {
         stage('Terraform Init') {
             steps {
-                sh 'terraform init'
+                sh 'terraform init -input=false'
             }
         }
         stage('Terraform Plan') {
             steps {
-                sh "terraform plan -var-file=${params.env_dir}/${params.tfvars_file}"
+                sh 'terraform workspace select ${params.env_dir}'
+                sh "terraform plan -input=false -out tfplan -var-file=${params.env_dir}/${params.tfvars_file}"
+                sh 'terraform show -no-color tfplan > tfplan.txt'
             }
         }
         stage('Terraform Apply/Destroy') {
