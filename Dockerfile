@@ -1,4 +1,4 @@
-FROM hashicorp/terraform:0.18.0
+FROM hashicorp/terraform:1.3.7
 
 # Install the AWS CLI
 RUN apk add --update py-pip
