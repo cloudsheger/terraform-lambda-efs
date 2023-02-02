@@ -1,7 +1,7 @@
 resource "null_resource" "install_dependencies" {
 
   provisioner "local-exec" {
-    command = "${path.module}/lambda/build.sh"
+    command = "${path.module}/${var.lambda_root}/build.sh"
   }
   triggers = {
     handler      = filemd5("${path.module}/${var.lambda_root}/handler.py")
