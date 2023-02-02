@@ -6,3 +6,6 @@ RUN pip install awscli
 
 # Set the working directory
 WORKDIR /app
+
+# Set the entrypoint
+ENTRYPOINT ["terraform"]
