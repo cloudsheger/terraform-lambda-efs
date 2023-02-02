@@ -9,7 +9,7 @@ pipeline {
     agent {
 
     docker {
-        image 'hashicorp/terraform:1.2.0'
+        image 'hashicorp/terraform:latest'
         args  '--entrypoint="" -u root -v /opt/jenkins/.aws:/root/.aws -v /tmp:/root/'
           }
     }
