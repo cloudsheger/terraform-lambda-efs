@@ -2,7 +2,6 @@ pipeline {
     agent {
         docker {
             image 'hashicorp/terraform:latest'
-            label 'LINUX-SLAVE'
             args  '--entrypoint="" -u root -v /opt/jenkins/.aws:/root/.aws'
         }
     }
