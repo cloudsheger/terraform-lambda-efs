@@ -6,7 +6,7 @@ pipeline {
         booleanParam(name: 'auto_approve', defaultValue: false, description: 'Whether to auto-approve Terraform apply/destroy')
     }
 
-    agent { dockerfile true }
+    agent any
 
     environment {
         AWS_ACCESS_KEY_ID     = credentials('AWS_ACCESS_KEY_ID')
