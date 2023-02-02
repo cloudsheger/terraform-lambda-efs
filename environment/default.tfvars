@@ -1,0 +1,6 @@
+aws_region             = "us-east-1"
+name                   = "ztpt-worker"
+deployment_package     = "demo"
+stage                  = "test"
+handler                = "handler.lambda_handler"
+runtime                = "python3.7"
