@@ -2,6 +2,7 @@ pipeline {
 
     parameters {
         string(name: 'tfvars_file', defaultValue: 'terraform.tfvars', description: 'tfvars file name')
+        string(name: 'environment', defaultValue: 'default', description: 'Workspace/environment file to use for deployment')
         string(name: 'env_dir', defaultValue: 'environments', description: 'Directory containing environment-specific tfvars files')
         booleanParam(name: 'auto_approve', defaultValue: false, description: 'Whether to auto-approve Terraform apply/destroy')
     }
@@ -25,7 +26,7 @@ pipeline {
         }
         stage('Terraform Plan') {
             steps {
-                sh "terraform workspace select ${params.env_dir}"
+                sh "terraform workspace select ${environment}"
                 sh "terraform plan -input=false -out tfplan -var-file=${params.env_dir}/${params.tfvars_file}"
                 sh 'terraform show -no-color tfplan > tfplan.txt'
             }
