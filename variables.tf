@@ -71,5 +71,7 @@ variable "lambda_root" {
 }
 
 variable "version" {
+  type        = string
+  default = "1"
   
 }
