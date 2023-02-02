@@ -38,7 +38,7 @@ pipeline {
                     if (params.auto_approve) {
                         sh "terraform apply -auto-approve -var-file=${params.env_dir}/${params.tfvars_file}"
                     } else {
-                        def userInput = input message: 'Do you want to run terraform apply or terraform destroy?', ok: 'Apply', parameters: [choice(choices: ['Apply', 'Destroy'], name: 'Choice')]
+                        def userInput = input message: 'Do you want to run terraform apply or terraform destroy?', yes: 'Apply', parameters: [choice(choices: ['Apply', 'Destroy'], name: 'Choice')]
                         if (userInput == 'Apply') {
                             sh "terraform apply -var-file=${params.env_dir}/${params.tfvars_file}"
                         } else if (userInput == 'Destroy') {
