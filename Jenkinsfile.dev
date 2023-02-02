@@ -18,6 +18,7 @@ pipeline {
         AWS_ACCESS_KEY_ID     = credentials('AWS_ACCESS_KEY_ID')
         AWS_SECRET_ACCESS_KEY = credentials('AWS_SECRET_ACCESS_KEY')
     }
+    
     stages {
         stage('Terraform Init') {
             steps {
@@ -35,20 +36,15 @@ pipeline {
         stage('Terraform Apply/Destroy') {
             steps {
                 script {
-                    if (params.auto_approve) {
-                        sh "terraform apply -auto-approve -var-file=${params.env_dir}/${params.tfvars_file}"
+                    def tfCommand = input message: "Do you want to apply Terraform changes?", ok: "apply", parameters: [choice(choices: ["apply", "destroy"], description: "Choice")]
+                    if (tfCommand == "apply") {
+                        sh "terraform apply -auto-approve"
                     } else {
-                        def userInput = input message: 'Do you want to run terraform apply or terraform destroy?', yes: 'Apply', parameters: [choice(choices: ['Apply', 'Destroy'], name: 'Choice')]
-                        if (userInput == 'Apply') {
-                            sh "terraform apply -var-file=${params.env_dir}/${params.tfvars_file}"
-                        } else if (userInput == 'Destroy') {
-                            sh 'terraform destroy'
-                        } else {
-                            echo 'Terraform apply/destroy cancelled by user'
-                        }
+                        sh "terraform destroy -auto-approve"
                     }
                 }
             }
+        }
         }
     }
 }
