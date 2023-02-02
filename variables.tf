@@ -69,3 +69,7 @@ variable "lambda_root" {
   description = "The relative path to the source of the lambda"
   default     = "lambda"
 }
+
+variable "version" {
+  
+}
