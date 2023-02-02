@@ -26,7 +26,7 @@ pipeline {
         }
         stage('Terraform Plan') {
             steps {
-                sh "terraform workspace new ${environment}"
+                //sh "terraform workspace new ${environment}"
                 sh "terraform workspace select ${environment}"
                 sh "terraform plan -input=false -out tfplan -var-file=${params.env_dir}/${params.tfvars_file}"
                 sh 'terraform show -no-color tfplan > tfplan.txt'
