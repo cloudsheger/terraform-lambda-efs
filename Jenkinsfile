@@ -1,28 +1,27 @@
 pipeline {
-    agent {
-        docker {
-            image 'hashicorp/terraform:latest'
-            args  '--entrypoint="" -u root -v /opt/jenkins/.aws:/root/.aws'
-        }
-    }
+    agent any
 
     parameters {
         string(name: 'environment', defaultValue: 'default', description: 'Workspace/environment file to use for deployment')
-        //string(name: 'build-version', defaultValue: '', description: 'Version variable to pass to Terraform')
+        string(name: 'build-version', defaultValue: '', description: 'Version variable to pass to Terraform')
         booleanParam(name: 'autoApprove', defaultValue: false, description: 'Automatically run apply after generating plan?')
     }
     
     environment {
         AWS_ACCESS_KEY_ID     = credentials('AWS_ACCESS_KEY_ID')
         AWS_SECRET_ACCESS_KEY = credentials('AWS_SECRET_ACCESS_KEY')
+        TF_IN_AUTOMATION      = '1'
     }
 
     stages {
         stage('Plan') {
             steps {
+                script {
+                    currentBuild.displayName = params.build-version
+                }
                 sh 'terraform init -input=false'
                 sh 'terraform workspace select ${environment}'
-                sh "terraform plan -input=false -out tfplan --var-file=environments/${params.environment}.tfvars"
+                sh "terraform plan -input=false -out tfplan -var 'build-version=${params.build-version}' --var-file=environments/${params.environment}.tfvars"
                 sh 'terraform show -no-color tfplan > tfplan.txt'
             }
         }
