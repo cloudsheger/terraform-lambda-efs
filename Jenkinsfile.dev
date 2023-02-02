@@ -4,7 +4,7 @@ pipeline {
         string(name: 'AWS_SECRET_ACCESS_KEY', defaultValue: '', description: 'AWS Secret Access Key')
         string(name: 'tfvars_file', defaultValue: 'terraform.tfvars', description: 'tfvars file name')
         string(name: 'env_dir', defaultValue: 'environments', description: 'Directory containing environment-specific tfvars files')
-        boolean(name: 'auto_approve', defaultValue: false, description: 'Whether to auto-approve Terraform apply/destroy')
+        booleanParam(name: 'auto_approve', defaultValue: false, description: 'Whether to auto-approve Terraform apply/destroy')
     }
     agent {
         docker {
