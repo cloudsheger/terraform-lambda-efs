@@ -33,14 +33,20 @@ pipeline {
                 sh 'terraform show -no-color tfplan > tfplan.txt'
             }
         }
-        stage('Terraform Apply/Destroy') {
+        stage('Terraform Apply or Destroy') {
             steps {
                 script {
-                    def tfCommand = input message: "Do you want to apply Terraform changes?", ok: "apply", parameters: [choice(choices: ["apply", "destroy"], description: "Choice")]
-                    if (tfCommand == "apply") {
-                        sh "terraform apply -auto-approve"
+                    def userInput = input message: 'Do you want to apply or destroy Terraform changes?', ok: 'Apply', parameters: [choice(name: 'Choice', choices: ['Apply', 'Destroy'], description: 'Apply or Destroy Terraform changes')]
+                    if (userInput == 'Apply') {
+                        def applyInput = input message: 'Do you want to apply Terraform changes?', parameters: [string(defaultValue: 'yes', description: 'Type "yes" to confirm', name: 'Confirm Apply')]
+                        if (applyInput == 'yes') {
+                            sh 'terraform apply -auto-approve'
+                        }
                     } else {
-                        sh "terraform destroy -auto-approve"
+                        def destroyInput = input message: 'Do you want to destroy Terraform changes?', parameters: [string(defaultValue: 'yes', description: 'Type "yes" to confirm', name: 'Confirm Destroy')]
+                        if (destroyInput == 'yes') {
+                            sh 'terraform destroy -auto-approve'
+                        }
                     }
                 }
             }
