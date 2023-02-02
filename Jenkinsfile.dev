@@ -1,7 +1,7 @@
 pipeline {
 
     parameters {
-        string(name: 'tfvars_file', defaultValue: 'terraform.tfvars', description: 'tfvars file name')
+        string(name: 'tfvars_file', defaultValue: 'default.tfvars', description: 'tfvars file name')
         string(name: 'environment', defaultValue: 'default', description: 'Workspace/environment file to use for deployment')
         string(name: 'env_dir', defaultValue: 'environments', description: 'Directory containing environment-specific tfvars files')
         booleanParam(name: 'auto_approve', defaultValue: false, description: 'Whether to auto-approve Terraform apply/destroy')
