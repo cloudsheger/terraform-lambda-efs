@@ -6,8 +6,13 @@ pipeline {
         booleanParam(name: 'auto_approve', defaultValue: false, description: 'Whether to auto-approve Terraform apply/destroy')
     }
 
-    agent { dockerfile true }
+    agent {
 
+    docker {
+        image 'hashicorp/terraform:1.2.0'
+        args  '--entrypoint="" -u root -v /opt/jenkins/.aws:/root/.aws -v /tmp:/root/'
+          }
+    }
     environment {
         AWS_ACCESS_KEY_ID     = credentials('AWS_ACCESS_KEY_ID')
         AWS_SECRET_ACCESS_KEY = credentials('AWS_SECRET_ACCESS_KEY')
