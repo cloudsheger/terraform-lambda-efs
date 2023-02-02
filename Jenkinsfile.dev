@@ -1,0 +1,48 @@
+pipeline {
+    parameters {
+        string(name: 'AWS_ACCESS_KEY_ID', defaultValue: '', description: 'AWS Access Key ID')
+        string(name: 'AWS_SECRET_ACCESS_KEY', defaultValue: '', description: 'AWS Secret Access Key')
+        string(name: 'tfvars_file', defaultValue: 'terraform.tfvars', description: 'tfvars file name')
+        string(name: 'env_dir', defaultValue: 'environments', description: 'Directory containing environment-specific tfvars files')
+        boolean(name: 'auto_approve', defaultValue: false, description: 'Whether to auto-approve Terraform apply/destroy')
+    }
+    agent {
+        docker {
+            image 'hashicorp/terraform:0.15.0'
+        }
+    }
+    environment {
+        AWS_ACCESS_KEY_ID = params.AWS_ACCESS_KEY_ID
+        AWS_SECRET_ACCESS_KEY = params.AWS_SECRET_ACCESS_KEY
+    }
+    stages {
+        stage('Terraform Init') {
+            steps {
+                sh 'terraform init'
+            }
+        }
+        stage('Terraform Plan') {
+            steps {
+                sh "terraform plan -var-file=${params.env_dir}/${params.tfvars_file}"
+            }
+        }
+        stage('Terraform Apply/Destroy') {
+            steps {
+                script {
+                    if (params.auto_approve) {
+                        sh "terraform apply -auto-approve -var-file=${params.env_dir}/${params.tfvars_file}"
+                    } else {
+                        def userInput = input message: 'Do you want to run terraform apply or terraform destroy?', ok: 'Apply', parameters: [choice(choices: ['Apply', 'Destroy'], name: 'Choice')]
+                        if (userInput == 'Apply') {
+                            sh "terraform apply -var-file=${params.env_dir}/${params.tfvars_file}"
+                        } else if (userInput == 'Destroy') {
+                            sh 'terraform destroy'
+                        } else {
+                            echo 'Terraform apply/destroy cancelled by user'
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
